@@ -1,7 +1,7 @@
 <template>
   <div>
     <label class='material-checkbox'>
-      <input type='checkbox' v-model='todo.completed' />
+      <input type='checkbox' v-model="todo.completed" @change='changeCompelted(todo)' />
       <span></span>
     </label>
     <div
@@ -65,6 +65,21 @@ export default {
     },
     dbClickEdit (todo) {
       this.editing = true
+    },
+    changeCompelted (todo) {
+      axios
+        .put(`https://todolist-express-api.herokuapp.com/todo/${todo.id}`, {
+          text: todo.text,
+          completed: todo.completed
+        })
+        .then(response => {
+          if (response.data.status === 'error') {
+            throw new Error('error')
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     },
     removeTodo (todo) {
       eventBus.$emit('removeTodo', todo)
